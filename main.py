@@ -3,7 +3,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 
 def main():
@@ -84,7 +83,6 @@ def main():
                     "quantity": quantity,
                     "price": price
                 }
-                print("seller info: ", seller_info)
 
                 all_sellers_info.append(seller_info)
             results.append({
