@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 selenium = "*"
+fastapi = "*"
+mangum = "*"
+uvicorn = "*"
 
 [dev-packages]
 
