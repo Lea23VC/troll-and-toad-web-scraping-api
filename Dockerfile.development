@@ -25,12 +25,28 @@ RUN apt-get update && apt-get install -y \
 
 
 # Download and install ChromeDriver and Chrome
+# Download and install ChromeDriver
 RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chromedriver-linux64.zip" -O /tmp/chromedriver-linux64.zip \
     && unzip /tmp/chromedriver-linux64.zip -d /opt/ \
-    && wget -q "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O /tmp/chrome.deb \
-    && apt install -y /tmp/chrome.deb \
-    && rm /tmp/chrome.deb \
+    && ls -lah /opt/  # This will list the contents of /opt/ \
     && rm /tmp/chromedriver-linux64.zip
+
+# Move chromedriver to the correct location
+RUN mv /opt/chromedriver-linux64/chromedriver /opt/chromedriver && \
+    chmod +x /opt/chromedriver && \
+    rm -rf /opt/chromedriver-linux64
+
+
+# Download and install Google Chrome
+RUN wget -q "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O /tmp/chrome.deb \
+    && apt-get update \
+    && apt-get install -y /tmp/chrome.deb \
+    && rm /tmp/chrome.deb
+
+
+# Create a symbolic link for Chrome to ensure it can be found at /opt/chrome/chrome
+RUN mkdir -p /opt/chrome \
+    && ln -s /usr/bin/google-chrome /opt/chrome/chrome
 
 # Install pipenv
 RUN pip install pipenv
