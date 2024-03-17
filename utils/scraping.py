@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -6,34 +7,39 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def scrap_toad_and_toad(search_query: str):
-    # Setup the web driver (assuming Chrome and correct chromedriver is installed)
-    driver = webdriver.Chrome()
-
+    results = []
+    driver = None
     try:
+        start_time = time.time()  # Start timing
+        driver = webdriver.Chrome()
+
         # Navigate to the page
         driver.get('https://www.trollandtoad.com')
+        navigation_time = time.time()
+        print(
+            f"Navigation to page took: {navigation_time - start_time:.2f} seconds")
 
         # Wait for the search bar to be ready and perform a search
         search_bar = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "search-words"))
-        )
+            EC.presence_of_element_located((By.ID, "search-words")))
         search_bar.clear()
         search_bar.send_keys(search_query)
         search_bar.send_keys(Keys.RETURN)
+        search_time = time.time()
+        print(
+            f"Search execution took: {search_time - navigation_time:.2f} seconds")
 
         # Wait for the search results to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, ".row.mt-1.list-view"))
-        )
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, ".row.mt-1.list-view")))
+        results_load_time = time.time()
+        print(
+            f"Loading search results took: {results_load_time - search_time:.2f} seconds")
 
-        # Wait a bit for all elements to load
-
+        # Extracting information from the products
         product_divs = driver.find_elements(By.CSS_SELECTOR, ".product-col")
 
-        results = []
-
-        for div in product_divs:
+        for div in product_divs[:5]:
             try:
                 # Extract the card image URL
                 card_image_url = div.find_element(
@@ -92,11 +98,16 @@ def scrap_toad_and_toad(search_query: str):
                 'sellers_info': all_sellers_info
             })
 
-        # Print or process the results as needed
-        for result in results:
-            print(result)
-            pass
+        scraping_end_time = time.time()
+        print(
+            f"Scraping content took: {scraping_end_time - results_load_time:.2f} seconds")
 
+    except Exception as e:
+        print(f"An error occurred: {e}")
     finally:
-        # Clean up by closing the browser window
-        driver.quit()
+        if driver:
+            driver.quit()
+
+    total_time = time.time() - start_time
+    print(f"Total scraping process took: {total_time:.2f} seconds")
+    return results
