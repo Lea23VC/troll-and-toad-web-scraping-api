@@ -5,9 +5,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tempfile import mkdtemp
+from enums import Category
+from typing import Optional
 
 
-def scrap_toad_and_toad(search_query: str):
+def scrap_toad_and_toad(search_query: str, category: Optional[str]):
+
+    print("Category: ", category)
 
     options = webdriver.ChromeOptions()
     service = webdriver.ChromeService("/opt/chromedriver")

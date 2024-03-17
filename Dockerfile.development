@@ -48,6 +48,9 @@ RUN wget -q "https://dl.google.com/linux/direct/google-chrome-stable_current_amd
 RUN mkdir -p /opt/chrome \
     && ln -s /usr/bin/google-chrome /opt/chrome/chrome
 
+# Set the working directory to /app
+WORKDIR /app
+
 # Install pipenv
 RUN pip install pipenv
 
