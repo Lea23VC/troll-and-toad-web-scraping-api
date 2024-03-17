@@ -1,0 +1,40 @@
+
+
+service: tnt-web-scraping-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  ecr:
+    # Informs the framework that you want to use Docker images
+    images:
+      trollAndToadWebScrapingAPIimage: # Arbitrary name for your Docker image
+        path: ./
+        runtime: linux/amd64
+
+# you can overwrite defaults here
+  stage: dev
+  region: us-east-1
+  architecture: x86_64
+  timeout: 300
+
+
+
+package:
+  individually: true
+  include:
+    - Pipfile
+    - Pipfile.lock
+
+functions:
+  api:
+    memorySize: 2048
+    events:
+      - httpApi: '*'
+    image:
+      name: trollAndToadWebScrapingAPIimage
+
+
+
+

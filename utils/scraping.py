@@ -4,14 +4,36 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from tempfile import mkdtemp
 
 
 def scrap_toad_and_toad(search_query: str):
+
+    options = webdriver.ChromeOptions()
+    service = webdriver.ChromeService("/opt/chromedriver")
+
+    options.binary_location = '/opt/chrome/chrome'
+
+    options.add_argument("--headless=new")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1280x1696")
+    options.add_argument("--single-process")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-dev-tools")
+    options.add_argument("--no-zygote")
+    options.add_argument(f"--user-data-dir={mkdtemp()}")
+    options.add_argument(f"--data-path={mkdtemp()}")
+    options.add_argument(f"--disk-cache-dir={mkdtemp()}")
+    options.add_argument("--remote-debugging-port=9222")
+
     results = []
     driver = None
     try:
         start_time = time.time()  # Start timing
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(service=service,
+                                  options=options
+                                  )
 
         # Navigate to the page
         driver.get('https://www.trollandtoad.com')
