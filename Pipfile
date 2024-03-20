@@ -8,6 +8,7 @@ selenium = "*"
 fastapi = "*"
 mangum = "*"
 uvicorn = "*"
+requests = "*"
 
 [dev-packages]
 

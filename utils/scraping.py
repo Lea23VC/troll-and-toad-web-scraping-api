@@ -6,19 +6,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tempfile import mkdtemp
 from typing import Optional
+from utils.conversion import parse_price
+from decimal import Decimal, ROUND_HALF_UP
+
 
 # Settings
 from settings.selenium import get_chrome_options
 from settings.scraping import BASE_URL
+from settings.concurrency import get_today_dolar
 
 
 def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
 
-    print("Category: ", category_path)
-
     service = webdriver.ChromeService("/opt/chromedriver")
 
     options = get_chrome_options()
+
+    usd_clp_value = get_today_dolar()
 
     results = []
     driver = None
@@ -89,6 +93,10 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
                 price = row.find_element(
                     By.CSS_SELECTOR, "div.col-2.text-center.p-1").text
 
+                price_usd = parse_price(price)
+                price_clp = int((price_usd * Decimal(usd_clp_value)
+                                 ).quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+
                 seller_info = {
                     "seller": {
                         "name": seller_img_alt,
@@ -96,7 +104,10 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
                     },
                     "condition": condition,
                     "quantity": quantity,
-                    "price": price
+                    "price": {
+                        "USD": float(price_usd),
+                        "CLP": price_clp
+                    }
                 }
 
                 all_sellers_info.append(seller_info)
