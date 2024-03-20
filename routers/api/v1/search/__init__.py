@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Path, Depends
 from fastapi.responses import JSONResponse
 from utils.scraping import scrap_toad_and_toad
 
-from enums import Category
+from enums.Category import Category
 from fastapi.responses import JSONResponse
 from utils.scraping import scrap_toad_and_toad
 
@@ -23,7 +23,7 @@ def validate_category(category: str = Path(..., description="The category of the
 
 @router.get("/", response_model=List[str])
 async def search(name: str):
-    results = scrap_toad_and_toad(name, 'axxxs')
+    results = scrap_toad_and_toad(name)
     return JSONResponse(content=results)
 
 

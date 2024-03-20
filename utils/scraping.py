@@ -5,31 +5,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tempfile import mkdtemp
-from enums import Category
 from typing import Optional
 
+# Settings
+from settings.selenium import get_chrome_options
+from settings.scraping import BASE_URL
 
-def scrap_toad_and_toad(search_query: str, category: Optional[str]):
 
-    print("Category: ", category)
+def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
 
-    options = webdriver.ChromeOptions()
+    print("Category: ", category_path)
+
     service = webdriver.ChromeService("/opt/chromedriver")
 
-    options.binary_location = '/opt/chrome/chrome'
-
-    options.add_argument("--headless=new")
-    options.add_argument('--no-sandbox')
-    options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1280x1696")
-    options.add_argument("--single-process")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-dev-tools")
-    options.add_argument("--no-zygote")
-    options.add_argument(f"--user-data-dir={mkdtemp()}")
-    options.add_argument(f"--data-path={mkdtemp()}")
-    options.add_argument(f"--disk-cache-dir={mkdtemp()}")
-    options.add_argument("--remote-debugging-port=9222")
+    options = get_chrome_options()
 
     results = []
     driver = None
@@ -39,26 +28,20 @@ def scrap_toad_and_toad(search_query: str, category: Optional[str]):
                                   options=options
                                   )
 
-        # Navigate to the page
-        driver.get('https://www.trollandtoad.com')
-        navigation_time = time.time()
-        print(
-            f"Navigation to page took: {navigation_time - start_time:.2f} seconds")
+        if not category_path:
+            url = f"{BASE_URL}/category.php?selected-cat=0&search-words={search_query}"
 
-        # Wait for the search bar to be ready and perform a search
-        search_bar = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "search-words")))
-        search_bar.clear()
-        search_bar.send_keys(search_query)
-        search_bar.send_keys(Keys.RETURN)
+        else:
+            url = f"{BASE_URL}{category_path}?search-words={search_query}"
+
+        driver.get(url)
+        results_load_time = time.time()
         search_time = time.time()
-        print(
-            f"Search execution took: {search_time - navigation_time:.2f} seconds")
 
-        # Wait for the search results to load
+        # # Wait for the search results to load
         WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".row.mt-1.list-view")))
-        results_load_time = time.time()
+        # results_load_time = time.time()
         print(
             f"Loading search results took: {results_load_time - search_time:.2f} seconds")
 
