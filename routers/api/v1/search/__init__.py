@@ -24,10 +24,14 @@ def validate_category(category: str = Path(..., description="The category of the
 @router.get("/", response_model=List[str])
 async def search(name: str):
     results = scrap_toad_and_toad(name)
+    if not results:  # Check if the results list is empty
+        raise HTTPException(status_code=404, detail="No results found")
     return JSONResponse(content=results)
 
 
 @router.get("/{category}/", response_model=List[str])
 async def search(name: str, category: str = Depends(validate_category)):
     results = scrap_toad_and_toad(name, category)
+    if not results:  # Check if the results list is empty
+        raise HTTPException(status_code=404, detail="No results found")
     return JSONResponse(content=results)
