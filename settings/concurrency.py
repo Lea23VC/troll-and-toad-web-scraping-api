@@ -1,9 +1,22 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import lru_cache
 
 
 BASE_URL = "https://mindicador.cl/api/"
+
+
+def get_previous_weekday(date):
+    """
+    If the date falls on a weekend, return the previous Friday's date.
+    Otherwise, return the date itself.
+    """
+    weekday = date.weekday()
+    if weekday == 5:  # Saturday
+        return date - timedelta(days=1)
+    elif weekday == 6:  # Sunday
+        return date - timedelta(days=2)
+    return date
 
 
 @lru_cache
@@ -11,9 +24,11 @@ def get_today_dolar() -> float:
 
     # Get the today's dolar value in Chile, in format DD-MM-YYYY, using datetime
     today = datetime.now().strftime("%d-%m-%Y")
+    adjusted_date = get_previous_weekday(today)
+    formatted_date = adjusted_date.strftime("%d-%m-%Y")
 
     # Get the dolar value from the API
-    response = requests.get(f"{BASE_URL}dolar/{today}")
+    response = requests.get(f"{BASE_URL}dolar/{formatted_date}")
     data = response.json()
 
     # Example API response:
