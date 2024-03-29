@@ -23,7 +23,7 @@ def get_previous_weekday(date):
 def get_today_dolar() -> float:
 
     # Get the today's dolar value in Chile, in format DD-MM-YYYY, using datetime
-    today = datetime.now().strftime("%d-%m-%Y")
+    today = datetime.now()
     adjusted_date = get_previous_weekday(today)
     formatted_date = adjusted_date.strftime("%d-%m-%Y")
 
