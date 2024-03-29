@@ -22,8 +22,6 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
 
     options = get_chrome_options()
 
-    usd_clp_value = get_today_dolar()
-
     results = []
     driver = None
     try:
@@ -94,8 +92,6 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
                     By.CSS_SELECTOR, "div.col-2.text-center.p-1").text
 
                 price_usd = parse_price(price)
-                price_clp = int((price_usd * Decimal(usd_clp_value)
-                                 ).quantize(Decimal('1'), rounding=ROUND_HALF_UP))
 
                 seller_info = {
                     "seller": {
@@ -106,7 +102,6 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
                     "quantity": quantity,
                     "price": {
                         "USD": float(price_usd),
-                        "CLP": price_clp
                     }
                 }
 
