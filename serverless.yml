@@ -2,8 +2,6 @@
 
 service: tnt-web-scraping-api
 
-frameworkVersion: '3'
-
 provider:
   name: aws
   ecr:
