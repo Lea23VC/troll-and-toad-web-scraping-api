@@ -1,19 +1,15 @@
 import time
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tempfile import mkdtemp
 from typing import Optional
 from utils.conversion import parse_price
-from decimal import Decimal, ROUND_HALF_UP
 
 
 # Settings
 from settings.selenium import get_chrome_options
 from settings.scraping import BASE_URL
-from settings.concurrency import get_today_dolar
 
 
 def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
@@ -31,7 +27,8 @@ def scrap_toad_and_toad(search_query: str, category_path: Optional[str] = None):
                                   )
 
         if not category_path:
-            url = f"{BASE_URL}/category.php?selected-cat=0&search-words={search_query}"
+            url = f"{
+                BASE_URL}/category.php?selected-cat=0&search-words={search_query}"
 
         else:
             url = f"{BASE_URL}{category_path}?search-words={search_query}"
